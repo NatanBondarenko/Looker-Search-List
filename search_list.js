@@ -3,9 +3,20 @@ looker.plugins.visualizations.add({
     sections: {
       type: 'array',
       label: 'Sections',
-      display: 'string',
       section: 'Content',
+      display: 'table',
       default: [],
+      order: 1,
+      rows: {
+        header: {
+          type: 'string',
+          label: 'Header',
+        },
+        description: {
+          type: 'string',
+          label: 'Description',
+        },
+      },
     },
   },
   create: function(element, config) {
