@@ -13,8 +13,9 @@ looker.plugins.visualizations.add({
 
     searchBar.appendChild(searchInput);
 
-    // Create the help sections
-    const helpSections = [];
+    // Create the help sections container
+    const helpSectionsContainer = document.createElement('div');
+    helpSectionsContainer.classList.add('help-sections-container');
 
     // Function to toggle section visibility
     function toggleSection(sectionId) {
@@ -43,11 +44,34 @@ looker.plugins.visualizations.add({
       }
     }
 
-    // Generate the help section HTML dynamically
+    // Function to add a new help section
+    function addHelpSection(header, description) {
+      const sectionId = `section${helpSectionsContainer.childElementCount + 1}`;
+
+      const sectionContainer = document.createElement('div');
+      sectionContainer.classList.add('help-section');
+
+      const sectionHeader = document.createElement('div');
+      sectionHeader.classList.add('help-section-header');
+      sectionHeader.textContent = header;
+      sectionHeader.addEventListener('click', () => toggleSection(sectionId));
+
+      const sectionContent = document.createElement('div');
+      sectionContent.classList.add('help-section-content');
+      sectionContent.id = sectionId;
+      sectionContent.textContent = description;
+
+      sectionContainer.appendChild(sectionHeader);
+      sectionContainer.appendChild(sectionContent);
+
+      helpSectionsContainer.appendChild(sectionContainer);
+    }
+
+    // Generate the initial help sections from the provided data
     const helpSectionData = [
       {
         header: 'Offers Analysis',
-        description: 'Offers Analysis includes all offers generated for application - Don\'t support latest offer!',
+        description: 'Offers Analysis includes all offers generated for the application. Note: This version does not support the latest offer!',
       },
       {
         header: 'Flow Analysis (Latest Offer)',
@@ -56,31 +80,42 @@ looker.plugins.visualizations.add({
       // Add more help sections as needed
     ];
 
-    helpSectionData.forEach((sectionData, index) => {
-      const sectionId = `section${index + 1}`;
-
-      const sectionContainer = document.createElement('div');
-      sectionContainer.classList.add('help-section');
-
-      const sectionHeader = document.createElement('div');
-      sectionHeader.classList.add('help-section-header');
-      sectionHeader.textContent = sectionData.header;
-      sectionHeader.addEventListener('click', () => toggleSection(sectionId));
-
-      const sectionContent = document.createElement('div');
-      sectionContent.classList.add('help-section-content');
-      sectionContent.id = sectionId;
-      sectionContent.textContent = sectionData.description;
-
-      sectionContainer.appendChild(sectionHeader);
-      sectionContainer.appendChild(sectionContent);
-
-      helpSections.push(sectionContainer);
+    helpSectionData.forEach(sectionData => {
+      addHelpSection(sectionData.header, sectionData.description);
     });
+
+    // Create the form for adding new help sections
+    const addSectionForm = document.createElement('form');
+    addSectionForm.classList.add('add-section-form');
+
+    const headerInput = document.createElement('input');
+    headerInput.setAttribute('type', 'text');
+    headerInput.setAttribute('placeholder', 'Header');
+    addSectionForm.appendChild(headerInput);
+
+    const descriptionInput = document.createElement('input');
+    descriptionInput.setAttribute('type', 'text');
+    descriptionInput.setAttribute('placeholder', 'Description');
+    addSectionForm.appendChild(descriptionInput);
+
+    const addButton = document.createElement('button');
+    addButton.setAttribute('type', 'button');
+    addButton.textContent = 'Add Section';
+    addButton.addEventListener('click', () => {
+      const header = headerInput.value;
+      const description = descriptionInput.value;
+      if (header && description) {
+        addHelpSection(header, description);
+        headerInput.value = '';
+        descriptionInput.value = '';
+      }
+    });
+    addSectionForm.appendChild(addButton);
 
     // Append the elements to the visualization container
     element.appendChild(searchBar);
-    helpSections.forEach(section => element.appendChild(section));
+    element.appendChild(helpSectionsContainer);
+    element.appendChild(addSectionForm);
   },
   updateAsync: function(data, element, config, queryResponse, details, doneRendering) {
     // No data manipulation or updates needed for this visualization
