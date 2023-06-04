@@ -1,5 +1,18 @@
 looker.plugins.visualizations.add({
-  options: {},
+  options: {
+    helpSectionData: {
+      section1: {
+        header: {
+          type: "string",
+          label: "Header"
+        },
+        description: {
+          type: "string",
+          label: "Description"
+        }
+      }
+    }
+  },
   create: function(element, config) {
     // Create the search bar
     const searchBar = document.createElement('div');
@@ -44,6 +57,21 @@ looker.plugins.visualizations.add({
       }
     }
 
+    // Function to add help sections from the options data
+    function addHelpSectionsFromOptions() {
+      const sectionKeys = Object.keys(config.helpSectionData);
+
+      sectionKeys.forEach(sectionKey => {
+        const sectionData = config.helpSectionData[sectionKey];
+        const header = sectionData.header;
+        const description = sectionData.description;
+
+        if (header && description) {
+          addHelpSection(header, description);
+        }
+      });
+    }
+
     // Function to add a new help section
     function addHelpSection(header, description) {
       const sectionId = `section${helpSectionsContainer.childElementCount + 1}`;
@@ -67,55 +95,12 @@ looker.plugins.visualizations.add({
       helpSectionsContainer.appendChild(sectionContainer);
     }
 
-    // Generate the initial help sections from the provided data
-    const helpSectionData = [
-      {
-        header: 'Offers Analysis',
-        description: 'Offers Analysis includes all offers generated for the application. Note: This version does not support the latest offer!',
-      },
-      {
-        header: 'Flow Analysis (Latest Offer)',
-        description: 'Production data: from applications to loans',
-      },
-      // Add more help sections as needed
-    ];
-
-    helpSectionData.forEach(sectionData => {
-      addHelpSection(sectionData.header, sectionData.description);
-    });
-
-    // Create the form for adding new help sections
-    const addSectionForm = document.createElement('form');
-    addSectionForm.classList.add('add-section-form');
-
-    const headerInput = document.createElement('input');
-    headerInput.setAttribute('type', 'text');
-    headerInput.setAttribute('placeholder', 'Header');
-    addSectionForm.appendChild(headerInput);
-
-    const descriptionInput = document.createElement('input');
-    descriptionInput.setAttribute('type', 'text');
-    descriptionInput.setAttribute('placeholder', 'Description');
-    addSectionForm.appendChild(descriptionInput);
-
-    const addButton = document.createElement('button');
-    addButton.setAttribute('type', 'button');
-    addButton.textContent = 'Add Section';
-    addButton.addEventListener('click', () => {
-      const header = headerInput.value;
-      const description = descriptionInput.value;
-      if (header && description) {
-        addHelpSection(header, description);
-        headerInput.value = '';
-        descriptionInput.value = '';
-      }
-    });
-    addSectionForm.appendChild(addButton);
+    // Generate the initial help sections from the options data
+    addHelpSectionsFromOptions();
 
     // Append the elements to the visualization container
     element.appendChild(searchBar);
     element.appendChild(helpSectionsContainer);
-    element.appendChild(addSectionForm);
   },
   updateAsync: function(data, element, config, queryResponse, details, doneRendering) {
     // No data manipulation or updates needed for this visualization
