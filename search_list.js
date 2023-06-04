@@ -1,8 +1,8 @@
 looker.plugins.visualizations.add({
   options: {
-    headers: {
+    sections: {
       type: 'array',
-      label: 'Headers',
+      label: 'Sections',
       display: 'string',
       section: 'Content',
       default: [],
@@ -23,25 +23,26 @@ looker.plugins.visualizations.add({
     }
 
     // Generate the help section HTML dynamically based on options
-    config.headers.forEach((header, index) => {
+    config.sections.forEach((section, index) => {
       const sectionId = `section${index + 1}`;
 
-      const section = document.createElement('div');
-      section.classList.add('help-section');
+      const sectionContainer = document.createElement('div');
+      sectionContainer.classList.add('help-section');
 
       const sectionHeader = document.createElement('div');
       sectionHeader.classList.add('help-section-header');
-      sectionHeader.textContent = header;
+      sectionHeader.textContent = section.header;
       sectionHeader.addEventListener('click', () => toggleSection(sectionId));
 
       const sectionContent = document.createElement('div');
       sectionContent.classList.add('help-section-content');
       sectionContent.id = sectionId;
+      sectionContent.textContent = section.description;
 
-      section.appendChild(sectionHeader);
-      section.appendChild(sectionContent);
+      sectionContainer.appendChild(sectionHeader);
+      sectionContainer.appendChild(sectionContent);
 
-      helpSections.push(section);
+      helpSections.push(sectionContainer);
     });
 
     // Append the help sections to the element
