@@ -2,28 +2,85 @@ looker.plugins.visualizations.add({
   options: {},
   create: function(element, config) {
     // Define the HTML code for the help sections
-    const html = `
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search help topics...">
-      </div>
-      
-      <div class="help-section">
+    const html = `<head>
+    <style>
+        .help-section {
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .help-section-header {
+            background-color: #f2f2f2;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .help-section-content {
+            padding: 10px;
+            display: none;
+        }
+        
+        .help-section-content p {
+            margin: 0;
+        }
+        
+        .search-bar {
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        function toggleSection(sectionId) {
+            var content = document.getElementById(sectionId);
+            if (content.style.display === "none") {
+                content.style.display = "block";
+            } else {
+                content.style.display = "none";
+            }
+        }
+        
+        function searchHelp() {
+            var input = document.getElementById("searchInput").value.toLowerCase();
+            var sections = document.getElementsByClassName("help-section");
+            
+            for (var i = 0; i < sections.length; i++) {
+                var content = sections[i].getElementsByClassName("help-section-content")[0];
+                var matches = content.innerText.toLowerCase().includes(input);
+                
+                if (matches) {
+                    sections[i].style.display = "block";
+                } else {
+                    sections[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search help topics..." oninput="searchHelp()">
+    </div>
+    
+    <div class="help-section">
         <div class="help-section-header" onclick="toggleSection('section1')">
-          Offers Analysis
+            Offers Analysis
         </div>
         <div class="help-section-content" id="section1">
-          <p>Offers Analysis includes all offers generated for application - Don't support latest offer!</p>
+            <p>Offers Analysis includes all offers generated for application - Don't support latest offer!</p>
         </div>
-      </div>
-      
-      <div class="help-section">
+    </div>
+    
+    <div class="help-section">
         <div class="help-section-header" onclick="toggleSection('section2')">
-          Flow Analysis (Latest Offer)
+            Flow Analysis (Latest Offer)
         </div>
         <div class="help-section-content" id="section2">
-          <p>Production data: from applications to loans</p>
+            <p>Production data: from applications to loans</p>
         </div>
-      </div>
+    </div>
+    
+    <!-- Add more help sections as needed -->
+    
+</body>
     `;
     
     // Set the HTML content of the element
