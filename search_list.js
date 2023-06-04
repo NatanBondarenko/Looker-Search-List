@@ -4,7 +4,7 @@ looker.plugins.visualizations.add({
     // Define the HTML code for the help sections
     const html = `
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search help topics...">
+        <input type="text" id="searchInput" placeholder="Search help topics..." oninput="searchHelp()">
       </div>
       
       <div class="help-section">
@@ -28,22 +28,6 @@ looker.plugins.visualizations.add({
     
     // Set the HTML content of the element
     element.innerHTML = html;
-    
-    // Add event listeners for toggleSection and searchHelp functions
-    element.querySelector("#searchInput").addEventListener("input", searchHelp);
-    
-    const sectionHeaders = element.querySelectorAll(".help-section-header");
-    sectionHeaders.forEach(function(header) {
-      header.addEventListener("click", function() {
-        const sectionId = this.getAttribute("onclick").match(/toggleSection\('(.*)'\)/)[1];
-        const content = element.querySelector("#" + sectionId);
-        if (content.style.display === "none") {
-          content.style.display = "block";
-        } else {
-          content.style.display = "none";
-        }
-      });
-    });
   },
   updateAsync: function(data, element, config, queryResponse, details, doneRendering) {
     // No data manipulation or updates needed for this visualization
