@@ -1,18 +1,5 @@
 looker.plugins.visualizations.add({
-  options: {
-    helpSectionData: {
-      section1: {
-        header: {
-          type: "string",
-          label: "Header"
-        },
-        description: {
-          type: "string",
-          label: "Description"
-        }
-      }
-    }
-  },
+  options: {},
   create: function(element, config) {
     // Create the search bar
     const searchBar = document.createElement('div');
@@ -26,98 +13,64 @@ looker.plugins.visualizations.add({
 
     searchBar.appendChild(searchInput);
 
-    // Create the help sections container
-    const helpSectionsContainer = document.createElement('div');
-    helpSectionsContainer.classList.add('help-sections-container');
-
-    // Function to toggle section visibility
-    function toggleSection(sectionId) {
-      const content = document.getElementById(sectionId);
-      if (content.style.display === 'none') {
-        content.style.display = 'block';
-      } else {
-        content.style.display = 'none';
-      }
-    }
+    // Create the help table
+    const helpTable = document.createElement('table');
+    helpTable.classList.add('help-table');
 
     // Function to perform search on help topics
     function searchHelp() {
       const input = document.getElementById('searchInput').value.toLowerCase();
-      const sections = document.getElementsByClassName('help-section');
+      const rows = helpTable.getElementsByTagName('tr');
 
-      for (let i = 0; i < sections.length; i++) {
-        const content = sections[i].getElementsByClassName('help-section-content')[0];
+      for (let i = 0; i < rows.length; i++) {
+        const content = rows[i].getElementsByClassName('help-section-content')[0];
         const matches = content.innerText.toLowerCase().includes(input);
 
         if (matches) {
-          sections[i].style.display = 'block';
+          rows[i].style.display = '';
         } else {
-          sections[i].style.display = 'none';
+          rows[i].style.display = 'none';
         }
       }
     }
 
-    // Function to add help sections from the options data
-    function addHelpSectionsFromOptions() {
-      const sectionKeys = Object.keys(config.helpSectionData);
+    // Generate the help section HTML dynamically
+    const helpSectionData = [
+      {
+        header: 'Offers Analysis',
+        description: 'Offers Analysis includes all offers generated for application - Don\'t support latest offer!',
+      },
+      {
+        header: 'Flow Analysis (Latest Offer)',
+        description: 'Production data: from applications to loans',
+      },
+      // Add more help sections as needed
+    ];
 
-      sectionKeys.forEach(sectionKey => {
-        const sectionData = config.helpSectionData[sectionKey];
-        const header = sectionData.header;
-        const description = sectionData.description;
+    helpSectionData.forEach((sectionData, index) => {
+      const sectionId = `section${index + 1}`;
 
-        if (header && description) {
-          addHelpSection(header, description);
-        }
-      });
-    }
+      const row = document.createElement('tr');
 
-    // Function to add a new help section
-    function addHelpSection(header, description) {
-      const sectionId = `section${helpSectionsContainer.childElementCount + 1}`;
+      const headerCell = document.createElement('td');
+      headerCell.classList.add('help-section-header');
+      headerCell.textContent = sectionData.header;
+      headerCell.addEventListener('click', () => toggleSection(sectionId));
 
-      const sectionContainer = document.createElement('div');
-      sectionContainer.classList.add('help-section');
+      const contentCell = document.createElement('td');
+      contentCell.classList.add('help-section-content');
+      contentCell.id = sectionId;
+      contentCell.textContent = sectionData.description;
 
-      const sectionHeader = document.createElement('div');
-      sectionHeader.classList.add('help-section-header');
-      sectionHeader.textContent = header;
-      sectionHeader.addEventListener('click', () => toggleSection(sectionId));
+      row.appendChild(headerCell);
+      row.appendChild(contentCell);
 
-      const sectionContent = document.createElement('div');
-      sectionContent.classList.add('help-section-content');
-      sectionContent.id = sectionId;
-      sectionContent.textContent = description;
-
-      sectionContainer.appendChild(sectionHeader);
-      sectionContainer.appendChild(sectionContent);
-
-      helpSectionsContainer.appendChild(sectionContainer);
-    }
-
-    // Generate the initial help sections from the options data
-    function addHelpSectionsFromOptions() {
-  const sectionKeys = Object.keys(config.helpSectionData);
-
-  console.log('Section Keys:', sectionKeys); // Log the section keys
-
-  sectionKeys.forEach(sectionKey => {
-    const sectionData = config.helpSectionData[sectionKey];
-    const header = sectionData.header;
-    const description = sectionData.description;
-
-    console.log('Header:', header); // Log the header
-    console.log('Description:', description); // Log the description
-
-    if (header && description) {
-      addHelpSection(header, description);
-    }
-  });
-}
+      helpTable.appendChild(row);
+    });
 
     // Append the elements to the visualization container
     element.appendChild(searchBar);
-    element.appendChild(helpSectionsContainer);
+    element.appendChild(helpTable);
   },
   updateAsync: function(data, element, config, queryResponse, details, doneRendering) {
     // No data manipulation or updates needed for this visualization
