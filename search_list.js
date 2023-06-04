@@ -87,3 +87,46 @@ looker.plugins.visualizations.add({
     doneRendering();
   }
 });
+
+looker.plugins.visualizations.add({
+  options: {
+    css_style: {
+      type: 'string',
+      label: 'CSS Style',
+      default: `
+        .help-section {
+          border: 1px solid #ddd;
+          margin-bottom: 10px;
+        }
+
+        .help-section-header {
+          background-color: #f2f2f2;
+          padding: 10px;
+          cursor: pointer;
+        }
+
+        .help-section-content {
+          padding: 10px;
+          display: none;
+        }
+
+        .help-section-content p {
+          margin: 0;
+        }
+
+        .search-bar {
+          margin-bottom: 10px;
+        }
+      `
+    }
+  },
+  create: function(element, config) {
+    const styleTag = document.createElement('style');
+    styleTag.innerHTML = config.css_style;
+    element.appendChild(styleTag);
+  },
+  updateAsync: function(data, element, config, queryResponse, details, doneRendering) {
+    // No data manipulation or updates needed for this visualization
+    doneRendering();
+  }
+});
