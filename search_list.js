@@ -96,7 +96,24 @@ looker.plugins.visualizations.add({
     }
 
     // Generate the initial help sections from the options data
-    addHelpSectionsFromOptions();
+    function addHelpSectionsFromOptions() {
+  const sectionKeys = Object.keys(config.helpSectionData);
+
+  console.log('Section Keys:', sectionKeys); // Log the section keys
+
+  sectionKeys.forEach(sectionKey => {
+    const sectionData = config.helpSectionData[sectionKey];
+    const header = sectionData.header;
+    const description = sectionData.description;
+
+    console.log('Header:', header); // Log the header
+    console.log('Description:', description); // Log the description
+
+    if (header && description) {
+      addHelpSection(header, description);
+    }
+  });
+}
 
     // Append the elements to the visualization container
     element.appendChild(searchBar);
